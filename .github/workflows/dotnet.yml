@@ -16,6 +16,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Deploy to Railway
+      uses: devtomio/action-railway@v1.1.4
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
