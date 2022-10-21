@@ -18,6 +18,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         var mongoDbSettings = builder.Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             return new MongoClient(mongoDbSettings.ConnectionString);
