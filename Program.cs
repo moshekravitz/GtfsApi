@@ -17,11 +17,12 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        var mongoDbSettings = builder.Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
+        //var mongoDbSettings = builder.Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
 
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
-            return new MongoClient(mongoDbSettings.ConnectionString);
+            //return new MongoClient(mongoDbSettings.ConnectionString);
+            return new MongoClient(Environment.GetEnvironmentVariable("ConnectionString"));
         });
 
         builder.Services.AddSingleton<ApiKeyAttribute>();
@@ -38,7 +39,8 @@ internal class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddHealthChecks()
-            .AddMongoDb(mongoDbSettings.ConnectionString,
+            //.AddMongoDb(mongoDbSettings.ConnectionString,
+            .AddMongoDb(Environment.GetEnvironmentVariable("ConnectionString")!,
                 name: "mongodb",
                 timeout: TimeSpan.FromSeconds(3),
                 tags: new[] { "ready" });
