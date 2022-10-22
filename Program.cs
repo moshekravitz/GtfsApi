@@ -1,5 +1,4 @@
 using Catalog.repositories;
-using Catalog.settings;
 using GtfsApi.Repositories;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Identity;
@@ -17,14 +16,11 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        //var mongoDbSettings = builder.Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
-        Console.WriteLine(Environment.GetEnvironmentVariable("MONGO_URL"));
+        
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
-            //return new MongoClient(mongoDbSettings.ConnectionString);
             return new MongoClient(Environment.GetEnvironmentVariable("MONGO_URL"));
         });
-
         builder.Services.AddSingleton<ApiKeyAttribute>();
         builder.Services.AddSingleton<ApiKeyAdminAttribute>();
         builder.Services.AddSingleton<IRoutesRepo, MongoDbRoutesDepository>();
@@ -34,12 +30,10 @@ internal class Program
         builder.Services.AddSingleton<IRouteToDateRepo, MongoDbRouteToDateDepository>();
 
         builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddHealthChecks()
-            //.AddMongoDb(mongoDbSettings.ConnectionString,
             .AddMongoDb(Environment.GetEnvironmentVariable("MONGO_URL"),
                 name: "mongodb",
                 timeout: TimeSpan.FromSeconds(3),
