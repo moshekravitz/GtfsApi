@@ -22,7 +22,7 @@ internal class Program
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             //return new MongoClient(mongoDbSettings.ConnectionString);
-            return new MongoClient(Environment.GetEnvironmentVariable("ConnectionString"));
+            return new MongoClient(Environment.GetEnvironmentVariable("MONGO_URL"));
         });
 
         builder.Services.AddSingleton<ApiKeyAttribute>();
