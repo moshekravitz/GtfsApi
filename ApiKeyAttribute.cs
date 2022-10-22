@@ -51,7 +51,9 @@ namespace Catalog.Attributes
                 return;
             }
             var apiKey = Environment.GetEnvironmentVariable(APIKEYNAME);
-            if (!apiKey.Equals(extractedApiKey))
+            Console.WriteLine(apiKey);
+            Console.WriteLine(extractedApiKey);
+            if (apiKey != extractedApiKey)
             {
                 context.Result = new ContentResult()
                 {
