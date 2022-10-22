@@ -7,7 +7,7 @@ COPY ["GtfsApi.csproj", "./"]
 RUN dotnet restore "GtfsApi.csproj"
 COPY . .
 
-RUN dotnet publish "GtfsApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "GtfsApi.csproj" -c Release -o /app/publish /p:UseAppHost=true
 
 FROM base AS final
 WORKDIR /app
