@@ -9,6 +9,7 @@ COPY . .
 WORKDIR "/src/."
 RUN dotnet build "GtfsApi.csproj" -c Release -o /app/build
 
+FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "GtfsApi.dll"]
