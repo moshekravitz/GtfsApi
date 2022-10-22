@@ -40,7 +40,7 @@ internal class Program
 
         builder.Services.AddHealthChecks()
             //.AddMongoDb(mongoDbSettings.ConnectionString,
-            .AddMongoDb(Environment.GetEnvironmentVariable("ConnectionString")!,
+            .AddMongoDb(Environment.GetEnvironmentVariable("MONGO_URL"),
                 name: "mongodb",
                 timeout: TimeSpan.FromSeconds(3),
                 tags: new[] { "ready" });
