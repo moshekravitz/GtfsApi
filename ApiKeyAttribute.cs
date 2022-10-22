@@ -21,9 +21,7 @@ namespace Catalog.Attributes
                 };
                 return;
             }
-            var appSettings = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
-            //var apiKey = appSettings.GetValue<string>(APIKEYNAME);
-            var apiKey = appSettings.GetSection(APIKEYNAME).Get<string>();
+            var apiKey = Environment.GetEnvironmentVariable(APIKEYNAME);
             if (!apiKey.Equals(extractedApiKey))
             {
                 context.Result = new ContentResult()
@@ -52,9 +50,7 @@ namespace Catalog.Attributes
                 };
                 return;
             }
-            var appSettings = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
-            //var apiKey = appSettings.GetValue<string>(APIKEYNAME);
-            var apiKey = appSettings.GetSection(APIKEYNAME).Get<string>();
+            var apiKey = Environment.GetEnvironmentVariable(APIKEYNAME);
             if (!apiKey.Equals(extractedApiKey))
             {
                 context.Result = new ContentResult()
