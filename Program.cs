@@ -10,31 +10,32 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 using Catalog.Attributes;
+using MongoDB.Driver.Core.Configuration;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
+        string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
-            return new MongoClient(Environment.GetEnvironmentVariable("MONGO_URL"));
+            return new MongoClient(ConnectionString);
         });
         builder.Services.AddSingleton<ApiKeyAttribute>();
         builder.Services.AddSingleton<ApiKeyAdminAttribute>();
         builder.Services.AddSingleton<IRoutesRepo, MongoDbRoutesDepository>();
         builder.Services.AddSingleton<IExtendedRoutesRepo, MongoDbExtendedRoutesDepository>();
-        builder.Services.AddSingleton<IStopTimesRepo, MongoDbStopTimesListDepository>();
         builder.Services.AddSingleton<IStopInfoRepo, MongoDbStopInfoDepository>();
-        builder.Services.AddSingleton<IRouteToDateRepo, MongoDbRouteToDateDepository>();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+            /*.AddMongoDb(Environment.GetEnvironmentVariable("MONGO_URL"), */
         builder.Services.AddHealthChecks()
-            .AddMongoDb(Environment.GetEnvironmentVariable("MONGO_URL"),
+            .AddMongoDb(ConnectionString,
                 name: "mongodb",
                 timeout: TimeSpan.FromSeconds(3),
                 tags: new[] { "ready" });

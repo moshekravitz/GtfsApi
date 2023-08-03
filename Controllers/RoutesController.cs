@@ -117,59 +117,6 @@ namespace Catalog.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class stopTimesController : ControllerBase
-    {
-        public IStopTimesRepo repository;
-        public stopTimesController(IStopTimesRepo repository)
-        {
-            this.repository = repository;
-        }
-
-        [HttpGet("id")]
-        [ApiKey]
-        public async Task<ActionResult<StopTimesListDto>> GetSingleStopTimes(int routeId)
-        {
-            var result = await repository.GetSingleAsync(routeId);
-            if (result is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(result.AsDto());
-        }
-
-        [HttpPost("Admin")]
-        [ApiKeyAdmin]
-        public async Task CreateStopTimesListList(List<StopTimesList> stopTLList)
-        {
-            await repository.CreateListAsync(stopTLList);
-        }
-
-        [HttpPut("Admin")]
-        [ApiKeyAdmin]
-        public async Task UpdateStopTimesListList(List<StopTimesList> stopTLList) 
-        {
-            await repository.UpdateListAsync(stopTLList);
-        }
-
-        [HttpDelete("Admin")]
-        [ApiKeyAdmin]
-        public async Task DeleteManyStopTimesLists(List<StopTimesList> stopTLList)
-        {
-            await repository.DeleteManyAsync(stopTLList);
-        }
-
-        [HttpDelete("all/Admin")]
-        [ApiKeyAdmin]
-        public async Task DeleteAllStopTimesLists()
-        {
-            await repository.DeleteAllAsync();
-        }
-    }
-
-
-    [Route("api/[controller]")]
-    [ApiController]
     public class stopInfoController : ControllerBase
     {
         public IStopInfoRepo repository;
@@ -210,60 +157,6 @@ namespace Catalog.Controllers
         public async Task DeleteManyStopInfo(List<StopInfo> stopInfoList)
         {
             await repository.DeleteManyAsync(stopInfoList);
-        }
-
-        [HttpDelete("all/Admin")]
-        [ApiKeyAdmin]
-        public async Task DeleteAll()
-        {
-            await repository.DeleteAllAsync();
-        }
-    }
-
-
-    [Route("api/[controller]")]
-    [ApiController]
-    public class RouteToDateController : ControllerBase
-    {
-        public IRouteToDateRepo repository;
-        public RouteToDateController(IRouteToDateRepo repository)
-        {
-            this.repository = repository;
-        }
-
-        [HttpGet("idList")]
-        [ApiKey]
-        public async Task<ActionResult<RouteToDate>> Get(int routeId)
-        {
-            RouteToDate result = await repository.GetSingleAsync(routeId);
-            if (result is null)
-            {
-                return NotFound();
-            }
-
-            return Ok(result.AsDto());
-        }
-
-        [HttpPost("Admin")]
-        [ApiKeyAdmin]
-        public async Task CreateList(List<RouteToDate> routeToDateList)
-        {
-            await repository.CreateListAsync(routeToDateList);
-        }
-
-
-        [HttpPut("Admin")]
-        [ApiKeyAdmin]
-        public async Task UpdateStopInfoList(List<RouteToDate> routeToDateList) 
-        {
-            await repository.UpdateListAsync(routeToDateList);
-        }
-
-        [HttpDelete("Admin")]
-        [ApiKeyAdmin]
-        public async Task DeleteManyStopInfo(List<RouteToDate> routeToDateList)
-        {
-            await repository.DeleteManyAsync(routeToDateList);
         }
 
         [HttpDelete("all/Admin")]

@@ -29,19 +29,6 @@ namespace Catalog.repositories
         public Task DeleteAllAsync();
 
     }
-    
-    public interface IStopTimesRepo
-    {
-        public Task<StopTimesList> GetSingleAsync(int routeId);
-
-        public Task CreateListAsync(List<StopTimesList> stopTimesList);
-
-        public Task UpdateListAsync(List<StopTimesList> routesList);
-
-        public Task DeleteManyAsync(List<StopTimesList> routesList);
-
-        public Task DeleteAllAsync();
-    }
 
     public interface IStopInfoRepo
     {
@@ -55,18 +42,4 @@ namespace Catalog.repositories
 
         public Task DeleteAllAsync();
     }
-
-    public interface IRouteToDateRepo
-    {
-        public Task<RouteToDate> GetSingleAsync(int routeId);
-
-        public Task CreateListAsync(List<RouteToDate> StopInfoList);
-
-        public Task UpdateListAsync(List<RouteToDate> routesList);
-
-        public Task DeleteManyAsync(List<RouteToDate> routesList);
-
-        public Task DeleteAllAsync();
-    }
-
 }

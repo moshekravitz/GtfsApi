@@ -62,30 +62,11 @@ namespace GtfsApi.Repositories
         public async Task CreateListAsync(List<Routes> routesList)
         {
 
-            routesCollection.UpdateMany(new BsonDocument(), Builders<Routes>.Update.Set(route => route.dirtyBit, false));
-            if (routesCollection.EstimatedDocumentCount() > 0)
+            if (routesCollection.EstimatedDocumentCount() == 0)
             {
-                var it = routesList.GetEnumerator();
-
-                it.MoveNext();
-                var option = new FindOneAndReplaceOptions<Routes>();
-                option.IsUpsert = true;
-                // option.Sort = Builders<Routes>.Sort.Ascending(route => route.RouteId);//TODO: remove
-                while (it.Current != null)
-                {
-                    routesCollection.FindOneAndReplace(
-                        filterBuilder.Eq(route => route.RouteId, it.Current.RouteId),
-                        it.Current,
-                        option);
-                    it.MoveNext();
-                }
-
-                routesCollection.DeleteMany(filterBuilder.Where(route => route.dirtyBit == false));
+                await routesCollection.DeleteManyAsync(new BsonDocument());
             }
-            else
-            {
-                await routesCollection.InsertManyAsync(routesList);
-            }
+            await routesCollection.InsertManyAsync(routesList);
         }
 
         public async Task DeleteAllAsync()
@@ -155,127 +136,16 @@ namespace GtfsApi.Repositories
 
         public async Task CreateListAsync(List<ExtendedRoutes> extendedRoutesList)
         {
-            extendedRoutesCollection.UpdateMany(new BsonDocument(), Builders<ExtendedRoutes>.Update.Set(eRoute => eRoute.dirtyBit, false));
-            if (extendedRoutesCollection.EstimatedDocumentCount() > 0)
+            if (extendedRoutesCollection.EstimatedDocumentCount() == 0)
             {
-                var it = extendedRoutesList.GetEnumerator();
-
-                it.MoveNext();
-                var option = new FindOneAndReplaceOptions<ExtendedRoutes>();
-                option.IsUpsert = true;
-                while (it.Current != null)
-                {
-                    extendedRoutesCollection.FindOneAndReplace(
-                        filterBuilder.Eq(eRoute => eRoute.RouteId, it.Current.RouteId),
-                        it.Current,
-                        new FindOneAndReplaceOptions<ExtendedRoutes> { IsUpsert = true });
-                    it.MoveNext();
-                }
-
-                extendedRoutesCollection.DeleteMany(filterBuilder.Where(eRoute => eRoute.dirtyBit == false));
+                await extendedRoutesCollection.DeleteManyAsync(new BsonDocument());
             }
-            else
-            {
-                await extendedRoutesCollection.InsertManyAsync(extendedRoutesList);
-            }
+            await extendedRoutesCollection.InsertManyAsync(extendedRoutesList);
         }
 
         public async Task DeleteAllAsync()
         {
             await extendedRoutesCollection.DeleteManyAsync(new BsonDocument());
-        }
-    }
-
-    public class MongoDbStopTimesListDepository : IStopTimesRepo
-    {
-        private const string databaseName = "catalog";
-        private const string collectionName = "stop times list";
-
-        private readonly IMongoCollection<StopTimesList> StopTimesListCollection;
-
-        private readonly FilterDefinitionBuilder<StopTimesList> filterBuilder = Builders<StopTimesList>.Filter;
-
-        public MongoDbStopTimesListDepository(IMongoClient mongoClient)
-        {
-            IMongoDatabase database = mongoClient.GetDatabase(databaseName);
-            StopTimesListCollection = database.GetCollection<StopTimesList>(collectionName);
-
-        }
-
-        public async Task<StopTimesList> GetSingleAsync(int myRouteId)
-        {
-            var filter = filterBuilder.Eq(route => route.RouteId, myRouteId);
-            return await (await StopTimesListCollection.FindAsync(filter)).SingleOrDefaultAsync();
-        }
-
-        public async Task UpdateListAsync(List<StopTimesList> myList)
-        {
-            if (StopTimesListCollection.EstimatedDocumentCount() > 0)
-            {
-                var it = myList.GetEnumerator();
-
-                it.MoveNext();
-                var option = new FindOneAndReplaceOptions<StopTimesList>();
-                option.IsUpsert = true;
-
-                while (it.Current != null)
-                {
-                    await StopTimesListCollection.FindOneAndReplaceAsync(
-                        filterBuilder.Eq(route => route.RouteId, it.Current.RouteId),
-                        it.Current,
-                        option);
-                    it.MoveNext();
-                }
-            }
-            else
-            {
-                await StopTimesListCollection.InsertManyAsync(myList);
-            }
-        }
-
-        public async Task DeleteManyAsync(List<StopTimesList> myList)
-        {
-            var it = myList.GetEnumerator();
-            it.MoveNext();
-            while (it.Current != null)
-            {
-                await StopTimesListCollection.FindOneAndDeleteAsync(
-                    filterBuilder.Eq(route => route.RouteId, it.Current.RouteId));
-                it.MoveNext();
-            }
-        }
-
-        public async Task CreateListAsync(List<StopTimesList> stopTimesList)
-        {
-
-            StopTimesListCollection.UpdateMany(new BsonDocument(), Builders<StopTimesList>.Update.Set(stopTimeL => stopTimeL.dirtyBit, false));
-            if (StopTimesListCollection.EstimatedDocumentCount() > 0)
-            {
-                var it = stopTimesList.GetEnumerator();
-
-                it.MoveNext();
-                var option = new FindOneAndReplaceOptions<StopTimesList>();
-                option.IsUpsert = true;
-                while (it.Current != null)
-                {
-                    StopTimesListCollection.FindOneAndReplace(
-                        filterBuilder.Eq(stopTimeL => stopTimeL.RouteId, it.Current.RouteId),
-                        it.Current,
-                        new FindOneAndReplaceOptions<StopTimesList> { IsUpsert = true });
-                    it.MoveNext();
-                }
-
-                StopTimesListCollection.DeleteMany(filterBuilder.Where(eRoute => eRoute.dirtyBit == false));
-            }
-            else
-            {
-                await StopTimesListCollection.InsertManyAsync(stopTimesList);
-            }
-        }
-
-        public async Task DeleteAllAsync()
-        {
-            await StopTimesListCollection.DeleteManyAsync(new BsonDocument());
         }
     }
 
@@ -330,6 +200,7 @@ namespace GtfsApi.Repositories
                 it.MoveNext();
             }
         }
+
         public async Task<IEnumerable<StopInfo>> GetListAsync(List<int> stopIdList)
         {
             List<StopInfo> newStopIList = new List<StopInfo> { };
@@ -344,29 +215,11 @@ namespace GtfsApi.Repositories
         public async Task CreateListAsync(List<StopInfo> stopInfo)
         {
 
-            StopInfoCollection.UpdateMany(new BsonDocument(), Builders<StopInfo>.Update.Set(stopI => stopI.dirtyBit, false));
-            if (StopInfoCollection.EstimatedDocumentCount() > 0)
+            if (StopInfoCollection.EstimatedDocumentCount() == 0)
             {
-                var it = stopInfo.GetEnumerator();
-
-                it.MoveNext();
-                var option = new FindOneAndReplaceOptions<StopInfo>();
-                option.IsUpsert = true;
-                while (it.Current != null)
-                {
-                    StopInfoCollection.FindOneAndReplace(
-                        filterBuilder.Eq(stopI => stopI.StopId, it.Current.StopId),
-                        it.Current,
-                        new FindOneAndReplaceOptions<StopInfo> { IsUpsert = true });
-                    it.MoveNext();
-                }
-
-                StopInfoCollection.DeleteMany(filterBuilder.Where(stopI => stopI.dirtyBit == false));
+                await StopInfoCollection.DeleteManyAsync(new BsonDocument());
             }
-            else
-            {
-                await StopInfoCollection.InsertManyAsync(stopInfo);
-            }
+            await StopInfoCollection.InsertManyAsync(stopInfo);
         }
 
         public async Task DeleteAllAsync()
@@ -375,94 +228,5 @@ namespace GtfsApi.Repositories
         }
     }
 
-    public class MongoDbRouteToDateDepository : IRouteToDateRepo
-    {
-        private const string databaseName = "catalog";
-        private const string collectionName = "route to date";
-
-        private readonly IMongoCollection<RouteToDate> RouteToDateCollection;
-        private readonly FilterDefinitionBuilder<RouteToDate> filterBuilder = Builders<RouteToDate>.Filter;
-
-        public MongoDbRouteToDateDepository(IMongoClient mongoClient)
-        {
-            IMongoDatabase database = mongoClient.GetDatabase(databaseName);
-            RouteToDateCollection = database.GetCollection<RouteToDate>(collectionName);
-
-        }
-
-        public async Task UpdateListAsync(List<RouteToDate> myList)
-        {
-            if (RouteToDateCollection.EstimatedDocumentCount() > 0)
-            {
-                var it = myList.GetEnumerator();
-
-                it.MoveNext();
-                var option = new FindOneAndReplaceOptions<RouteToDate>();
-                option.IsUpsert = true;
-
-                while (it.Current != null)
-                {
-                    await RouteToDateCollection.FindOneAndReplaceAsync(
-                        filterBuilder.Eq(route => route.LineDetailRecordId, it.Current.LineDetailRecordId),
-                        it.Current,
-                        option);
-                    it.MoveNext();
-                }
-            }
-            else
-            {
-                await RouteToDateCollection.InsertManyAsync(myList);
-            }
-        }
-
-        public async Task DeleteManyAsync(List<RouteToDate> myList)
-        {
-            var it = myList.GetEnumerator();
-            it.MoveNext();
-            while (it.Current != null)
-            {
-                await RouteToDateCollection.FindOneAndDeleteAsync(
-                    filterBuilder.Eq(route => route.LineDetailRecordId, it.Current.LineDetailRecordId));
-                it.MoveNext();
-            }
-        }
-        public async Task<RouteToDate> GetSingleAsync(int myRouteId)
-        {
-            var filter = filterBuilder.Eq(route => route.LineDetailRecordId, myRouteId);
-            return await (await RouteToDateCollection.FindAsync(filter)).SingleOrDefaultAsync();
-        }
-
-        public async Task CreateListAsync(List<RouteToDate> routeToDate)
-        {
-            RouteToDateCollection.UpdateMany(new BsonDocument(), Builders<RouteToDate>.Update.Set(routeTD => routeTD.dirtyBit, false));
-            if (RouteToDateCollection.EstimatedDocumentCount() > 0)
-            {
-                var it = routeToDate.GetEnumerator();
-
-                it.MoveNext();
-                var option = new FindOneAndReplaceOptions<StopInfo>();
-                option.IsUpsert = true;
-                while (it.Current != null)
-                {
-                    RouteToDateCollection.FindOneAndReplace(
-                        filterBuilder.Eq(routeTD => routeTD.LineDetailRecordId, it.Current.LineDetailRecordId),
-                        it.Current,
-                        new FindOneAndReplaceOptions<RouteToDate> { IsUpsert = true });
-                    it.MoveNext();
-                }
-
-                RouteToDateCollection.DeleteMany(filterBuilder.Where(routeTD => routeTD.dirtyBit == false));
-            }
-            else
-            {
-                await RouteToDateCollection.InsertManyAsync(routeToDate);
-            }
-        }
-
-        public async Task DeleteAllAsync()
-        {
-            await RouteToDateCollection.DeleteManyAsync(new BsonDocument());
-        }
-    }
 }
 

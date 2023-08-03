@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "ZLBSo3hvS/qmsCuBozLlAAwTqS6mlNHTEzmr0dMv0Xo=",
+  "Source": "GtfsApi",
+  "BasePath": "_content/GtfsApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
