@@ -228,5 +228,78 @@ namespace GtfsApi.Repositories
         }
     }
 
+    public class MongoDbShapesDepository : IShapesRepo
+    {
+        private const string databaseName = "catalog";
+        private const string collectionName = "shapes";
+
+        private readonly IMongoCollection<Shapes> shapesCollection;
+        private readonly FilterDefinitionBuilder<Shapes> filterBuilder = Builders<Shapes>.Filter;
+
+        public MongoDbShapesDepository(IMongoClient mongoClient)
+        {
+            IMongoDatabase database = mongoClient.GetDatabase(databaseName);
+            shapesCollection = database.GetCollection<Shapes>(collectionName);
+
+        }
+
+        public async Task<Shapes> GetSingleAsync(int myShapeId)
+        {
+            var filter = filterBuilder.Eq(shape => shape.ShapeId, myShapeId);
+            return await (await shapesCollection.FindAsync(filter)).SingleOrDefaultAsync();
+        }
+
+        public async Task UpdateListAsync(List<Shapes> myList)
+        {
+            if (shapesCollection.EstimatedDocumentCount() > 0)
+            {
+                var it = myList.GetEnumerator();
+
+                it.MoveNext();
+                var option = new FindOneAndReplaceOptions<Shapes>();
+                option.IsUpsert = true;
+
+                while (it.Current != null)
+                {
+                    await shapesCollection.FindOneAndReplaceAsync(
+                        filterBuilder.Eq(shape => shape.ShapeId, it.Current.ShapeId),
+                        it.Current,
+                        option);
+                    it.MoveNext();
+                }
+            }
+            else
+            {
+                await shapesCollection.InsertManyAsync(myList);
+            }
+        }
+
+        public async Task DeleteManyAsync(List<Shapes> myList)
+        {
+            var it = myList.GetEnumerator();
+            it.MoveNext();
+            while (it.Current != null)
+            {
+                await shapesCollection.FindOneAndDeleteAsync(
+                    filterBuilder.Eq(shape => shape.ShapeId, it.Current.ShapeId));
+                it.MoveNext();
+            }
+        }
+
+        public async Task CreateListAsync(List<Shapes> shapesList)
+        {
+            if (shapesCollection.EstimatedDocumentCount() == 0)
+            {
+                await shapesCollection.DeleteManyAsync(new BsonDocument());
+            }
+            await shapesCollection.InsertManyAsync(shapesList);
+        }
+
+        public async Task DeleteAllAsync()
+        {
+            await shapesCollection.DeleteManyAsync(new BsonDocument());
+        }
+    }
+
 }
 

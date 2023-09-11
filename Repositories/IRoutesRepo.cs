@@ -34,11 +34,24 @@ namespace Catalog.repositories
     {
         public Task<IEnumerable<StopInfo>> GetListAsync(List<int> stopIdList);
 
-        public Task CreateListAsync(List<StopInfo> StopInfoList);
+        public Task CreateListAsync(List<StopInfo> stopInfoList);
 
-        public Task UpdateListAsync(List<StopInfo> routesList);
+        public Task UpdateListAsync(List<StopInfo> stopInfoList);
 
-        public Task DeleteManyAsync(List<StopInfo> routesList);
+        public Task DeleteManyAsync(List<StopInfo> stopInfoList);
+
+        public Task DeleteAllAsync();
+    }
+
+    public interface IShapesRepo
+    {
+        public Task<Shapes> GetSingleAsync(int shapeId);
+
+        public Task CreateListAsync(List<Shapes> shapesList);
+
+        public Task UpdateListAsync(List<Shapes> shapesList);
+
+        public Task DeleteManyAsync(List<Shapes> shapesList);
 
         public Task DeleteAllAsync();
     }

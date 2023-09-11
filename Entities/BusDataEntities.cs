@@ -24,7 +24,7 @@ namespace GtfsApi.Entities
 
         public string RouteHeadSign { set; get; }
 
-        public string ShapeStr { set; get; }
+        public int ShapeId { set; get; }
 
         public List<StopTime> StopTimes { set; get; }
     }
@@ -50,5 +50,14 @@ namespace GtfsApi.Entities
         public double StopLat { get; set; }
 
         public double StopLon { get; set; }
+    }
+
+    [BsonIgnoreExtraElements]
+    public record Shapes
+    {
+        [Key]
+        public int ShapeId { get; set; }
+
+        public string ShapeStr  { set; get; }
     }
 }

@@ -4,6 +4,7 @@ using GtfsApi.Dots;
 using GtfsApi.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic.FileIO;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +21,6 @@ namespace Catalog.Controllers
         }
 
         // GET: api/<RoutesController>
-
         [HttpGet]
         [ApiKey]
         public async Task<ActionResult<IEnumerable<RouteDto>>> getAllRoutes()
@@ -34,6 +34,7 @@ namespace Catalog.Controllers
         }
 
         [HttpPost("Admin")]
+        [RequestSizeLimit(100_000_000)]
         [ApiKeyAdmin]
         public async Task CreateRoutesList(List<Routes> routesList)
         {
@@ -42,7 +43,7 @@ namespace Catalog.Controllers
 
         [HttpPut("Admin")]
         [ApiKeyAdmin]
-        public async Task UpdateRoutesList(List<Routes> routesList) 
+        public async Task UpdateRoutesList(List<Routes> routesList)
         {
             await repository.UpdateListAsync(routesList);
         }
@@ -86,6 +87,7 @@ namespace Catalog.Controllers
         }
 
         [HttpPost("Admin")]
+        [RequestSizeLimit(100_000_000)]
         [ApiKeyAdmin]
         public async Task CreateExtendedRoutesList(List<ExtendedRoutes> routesList)
         {
@@ -95,7 +97,7 @@ namespace Catalog.Controllers
 
         [HttpPut("Admin")]
         [ApiKeyAdmin]
-        public async Task UpdateExtendedRoutesList(List<ExtendedRoutes> routesList) 
+        public async Task UpdateExtendedRoutesList(List<ExtendedRoutes> routesList)
         {
             await repository.UpdateListAsync(routesList);
         }
@@ -139,6 +141,7 @@ namespace Catalog.Controllers
         }
 
         [HttpPost("Admin")]
+        [RequestSizeLimit(100_000_000)]
         [ApiKeyAdmin]
         public async Task CreateList(List<StopInfo> stopInfoList)
         {
@@ -147,7 +150,7 @@ namespace Catalog.Controllers
 
         [HttpPut("Admin")]
         [ApiKeyAdmin]
-        public async Task UpdateStopInfoList(List<StopInfo> stopInfoList) 
+        public async Task UpdateStopInfoList(List<StopInfo> stopInfoList)
         {
             await repository.UpdateListAsync(stopInfoList);
         }
@@ -162,6 +165,64 @@ namespace Catalog.Controllers
         [HttpDelete("all/Admin")]
         [ApiKeyAdmin]
         public async Task DeleteAll()
+        {
+            await repository.DeleteAllAsync();
+        }
+    }
+
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ShapesController : ControllerBase
+    {
+        public IShapesRepo repository;
+        public ShapesController(IShapesRepo repository)
+        {
+            this.repository = repository;
+        }
+
+        [HttpGet("id")]
+        [ApiKey]
+        public async Task<ActionResult<Shapes>> GetSingleRoute(int shapeId)
+        {
+            var shape = await repository.GetSingleAsync(shapeId);
+            if (shape is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(shape.AsDto());
+        }
+
+        [HttpPost("Admin")]
+        [RequestSizeLimit(100_000_000)]
+        [ApiKeyAdmin]
+        public async Task<ActionResult> CreateShapesList(IFormFile csvFile)
+        {
+
+            List<Shapes> records = Util.GetListFromCSV(csvFile);
+            await repository.CreateListAsync(records);
+
+            return Ok("CSV data processed successfully.");
+        }
+
+
+        [HttpPut("Admin")]
+        [ApiKeyAdmin]
+        public async Task UpdateShapesList(List<Shapes> shapesList)
+        {
+            await repository.UpdateListAsync(shapesList);
+        }
+
+        [HttpDelete("Admin")]
+        [ApiKeyAdmin]
+        public async Task DeleteManyShapes(List<Shapes> shapesList)
+        {
+            await repository.DeleteManyAsync(shapesList);
+        }
+
+        [HttpDelete("all/Admin")]
+        [ApiKeyAdmin]
+        public async Task DeleteAllShapes()
         {
             await repository.DeleteAllAsync();
         }

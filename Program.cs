@@ -10,6 +10,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 using Catalog.Attributes;
+using Microsoft.AspNetCore.HttpLogging;
 using MongoDB.Driver.Core.Configuration;
 
 internal class Program
@@ -18,7 +19,8 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
+        //string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
+        string ConnectionString = "mongodb://localhost:27017/";
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             return new MongoClient(ConnectionString);
@@ -28,6 +30,7 @@ internal class Program
         builder.Services.AddSingleton<IRoutesRepo, MongoDbRoutesDepository>();
         builder.Services.AddSingleton<IExtendedRoutesRepo, MongoDbExtendedRoutesDepository>();
         builder.Services.AddSingleton<IStopInfoRepo, MongoDbStopInfoDepository>();
+        builder.Services.AddSingleton<IShapesRepo, MongoDbShapesDepository>();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -40,6 +43,10 @@ internal class Program
                 timeout: TimeSpan.FromSeconds(3),
                 tags: new[] { "ready" });
 
+        builder.Services.AddHttpLogging(options =>
+        {
+            options.LoggingFields = HttpLoggingFields.RequestProperties;
+        });
 
 
         var app = builder.Build();
@@ -49,15 +56,18 @@ internal class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
         }
 
 
+        app.UseHttpLogging();
+        
         app.UseAuthentication();
 
         app.UseAuthorization();
 
         app.MapControllers();
+        
 
         app.MapHealthChecks("/health/ready", new HealthCheckOptions
         {
@@ -86,6 +96,7 @@ internal class Program
         {
             Predicate = (_) => false
         });
+
 
         app.Run();
     }
