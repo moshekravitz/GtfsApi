@@ -129,14 +129,14 @@ namespace Catalog.Controllers
 
         [HttpGet("idList")]
         [ApiKey]
-        public async Task<ActionResult<IEnumerable<StopInfoDto>>> Get(List<int> stopIdL)
+        public async Task<ActionResult<IEnumerable<StopInfoDto>>> Get([FromQuery] String stopIdL)
         {
-            IEnumerable<StopInfo> result = await repository.GetListAsync(stopIdL);
+            List<int> stopIdList = stopIdL.Split(',').Select(Int32.Parse).ToList();
+            IEnumerable<StopInfo> result = await repository.GetListAsync(stopIdList);
             if (result is null)
             {
                 return NotFound();
             }
-
             return Ok(result.AsDto());
         }
 
@@ -194,14 +194,12 @@ namespace Catalog.Controllers
         }
 
         [HttpPost("Admin")]
-        [RequestSizeLimit(100_000_000)]
+        [RequestSizeLimit(1_000_000_000)]
         [ApiKeyAdmin]
-        public async Task<ActionResult> CreateShapesList(IFormFile csvFile)
+        public async Task<ActionResult> CreateShapesList(IFormFile form)
         {
-
-            List<Shapes> records = Util.GetListFromCSV(csvFile);
+            List<Shapes> records = Util.GetListFromCsv(form);
             await repository.CreateListAsync(records);
-
             return Ok("CSV data processed successfully.");
         }
 

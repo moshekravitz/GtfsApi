@@ -62,7 +62,7 @@ namespace GtfsApi.Repositories
         public async Task CreateListAsync(List<Routes> routesList)
         {
 
-            if (routesCollection.EstimatedDocumentCount() == 0)
+            if (routesCollection.EstimatedDocumentCount() != 0)
             {
                 await routesCollection.DeleteManyAsync(new BsonDocument());
             }
@@ -94,7 +94,7 @@ namespace GtfsApi.Repositories
         public async Task<ExtendedRoutes> GetSingleAsync(int myRouteId)
         {
             var filter = filterBuilder.Eq(route => route.RouteId, myRouteId);
-            return await (await extendedRoutesCollection.FindAsync(filter)).SingleOrDefaultAsync();
+            return await (await extendedRoutesCollection.FindAsync(filter)).FirstOrDefaultAsync();
         }
 
         public async Task UpdateListAsync(List<ExtendedRoutes> myList)
@@ -136,7 +136,7 @@ namespace GtfsApi.Repositories
 
         public async Task CreateListAsync(List<ExtendedRoutes> extendedRoutesList)
         {
-            if (extendedRoutesCollection.EstimatedDocumentCount() == 0)
+            if (extendedRoutesCollection.EstimatedDocumentCount() != 0)
             {
                 await extendedRoutesCollection.DeleteManyAsync(new BsonDocument());
             }
@@ -215,7 +215,7 @@ namespace GtfsApi.Repositories
         public async Task CreateListAsync(List<StopInfo> stopInfo)
         {
 
-            if (StopInfoCollection.EstimatedDocumentCount() == 0)
+            if (StopInfoCollection.EstimatedDocumentCount() != 0)
             {
                 await StopInfoCollection.DeleteManyAsync(new BsonDocument());
             }
@@ -246,7 +246,7 @@ namespace GtfsApi.Repositories
         public async Task<Shapes> GetSingleAsync(int myShapeId)
         {
             var filter = filterBuilder.Eq(shape => shape.ShapeId, myShapeId);
-            return await (await shapesCollection.FindAsync(filter)).SingleOrDefaultAsync();
+            return await (await shapesCollection.FindAsync(filter)).FirstOrDefaultAsync();
         }
 
         public async Task UpdateListAsync(List<Shapes> myList)
@@ -288,7 +288,7 @@ namespace GtfsApi.Repositories
 
         public async Task CreateListAsync(List<Shapes> shapesList)
         {
-            if (shapesCollection.EstimatedDocumentCount() == 0)
+            if (shapesCollection.EstimatedDocumentCount() != 0)
             {
                 await shapesCollection.DeleteManyAsync(new BsonDocument());
             }

@@ -4,13 +4,13 @@ namespace GtfsApi.Dots
 {
     public record RouteDto(int RouteId, String RouteShortName,String RouteLongName);
     public record ExtendedRouteDto(int routeId, string routeHeadSign, int shapeId, List<StopTime> stopTimes);
-    public record StopInfoDto(int stopId, string stopName, double stopLat, double stopLon);
-    public record ShapeDto(int shapeId, string ShapeStr);
+    public record StopInfoDto(int stopId, String? stopName, double stopLat, double stopLon);
+    public record ShapeDto(int shapeId, List<Coords> shapeCoords);
 
     public static class Extensions {
         public static RouteDto AsDto(this Routes route)
         {
-            return new RouteDto(route.RouteId,route.RouteLongName,route.RouteShortName);
+            return new RouteDto(route.RouteId,route.RouteShortName,route.RouteLongName);
         }
 
         public static ExtendedRouteDto AsDto(this ExtendedRoutes route)
@@ -31,7 +31,7 @@ namespace GtfsApi.Dots
 
         public static ShapeDto AsDto(this Shapes shape)
         {
-            return new ShapeDto(shape.ShapeId, shape.ShapeStr);;
+            return new ShapeDto(shape.ShapeId, shape.ShapeCoords);;
         }
     }
 }

@@ -1,17 +1,12 @@
 using Catalog.repositories;
 using GtfsApi.Repositories;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using System.Configuration;
 using System.Net.Mime;
 using System.Text.Json;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using ConfigurationManager = Microsoft.Extensions.Configuration.ConfigurationManager;
 using Catalog.Attributes;
 using Microsoft.AspNetCore.HttpLogging;
-using MongoDB.Driver.Core.Configuration;
+using Microsoft.AspNetCore.Http.Features;
 
 internal class Program
 {
@@ -19,8 +14,8 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        //string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
-        string ConnectionString = "mongodb://localhost:27017/";
+        string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
+        //string ConnectionString = "mongodb://localhost:27017/";
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             return new MongoClient(ConnectionString);
@@ -31,12 +26,20 @@ internal class Program
         builder.Services.AddSingleton<IExtendedRoutesRepo, MongoDbExtendedRoutesDepository>();
         builder.Services.AddSingleton<IStopInfoRepo, MongoDbStopInfoDepository>();
         builder.Services.AddSingleton<IShapesRepo, MongoDbShapesDepository>();
+        builder.Services.Configure<FormOptions>(options =>
+        {
+            options.MultipartBodyLengthLimit = 1000000000; // 1 GB
+            options.ValueLengthLimit = int.MaxValue;
+            options.ValueCountLimit = int.MaxValue;
+            options.KeyLengthLimit = int.MaxValue;
+            options.MultipartHeadersLengthLimit = int.MaxValue;
+        });
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
-            /*.AddMongoDb(Environment.GetEnvironmentVariable("MONGO_URL"), */
+        /*.AddMongoDb(Environment.GetEnvironmentVariable("MONGO_URL"), */
         builder.Services.AddHealthChecks()
             .AddMongoDb(ConnectionString,
                 name: "mongodb",
@@ -61,13 +64,13 @@ internal class Program
 
 
         app.UseHttpLogging();
-        
+
         app.UseAuthentication();
 
         app.UseAuthorization();
 
         app.MapControllers();
-        
+
 
         app.MapHealthChecks("/health/ready", new HealthCheckOptions
         {

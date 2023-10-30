@@ -47,9 +47,17 @@ namespace GtfsApi.Entities
 
         public string StopName { get; set; }
 
-        public double StopLat { get; set; }
+        public Double StopLat { get; set; }
 
-        public double StopLon { get; set; }
+        public Double StopLon { get; set; }
+    }
+
+    [BsonIgnoreExtraElements]
+    public record Coords
+    {
+        public Double shapeLat { get; set; }
+
+        public Double shapeLon { get; set; }
     }
 
     [BsonIgnoreExtraElements]
@@ -58,6 +66,6 @@ namespace GtfsApi.Entities
         [Key]
         public int ShapeId { get; set; }
 
-        public string ShapeStr  { set; get; }
+        public List<Coords> ShapeCoords  { set; get; }
     }
 }
