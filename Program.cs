@@ -14,8 +14,8 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        //string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
-        string ConnectionString = "mongodb://localhost:27017/";
+        string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
+        //string ConnectionString = "mongodb://localhost:27017/";
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             return new MongoClient(ConnectionString);
