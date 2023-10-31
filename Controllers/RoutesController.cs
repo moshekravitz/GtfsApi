@@ -199,6 +199,8 @@ namespace Catalog.Controllers
         public async Task<ActionResult> CreateShapesList(IFormFile form)
         {
             List<Shapes> records = Util.GetListFromCsv(form);
+            //print exact type of recoreds
+            Console.WriteLine(records[0].GetType());
             await repository.CreateListAsync(records);
             return Ok("CSV data processed successfully.");
         }

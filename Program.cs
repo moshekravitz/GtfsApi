@@ -14,8 +14,8 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
-        //string ConnectionString = "mongodb://localhost:27017/";
+        //string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
+        string ConnectionString = "mongodb://localhost:27017/";
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             return new MongoClient(ConnectionString);
@@ -26,14 +26,16 @@ internal class Program
         builder.Services.AddSingleton<IExtendedRoutesRepo, MongoDbExtendedRoutesDepository>();
         builder.Services.AddSingleton<IStopInfoRepo, MongoDbStopInfoDepository>();
         builder.Services.AddSingleton<IShapesRepo, MongoDbShapesDepository>();
-        builder.Services.Configure<FormOptions>(options =>
+        
+        /* builder.Services.Configure<FormOptions>(options =>
         {
             options.MultipartBodyLengthLimit = 1000000000; // 1 GB
             options.ValueLengthLimit = int.MaxValue;
             options.ValueCountLimit = int.MaxValue;
             options.KeyLengthLimit = int.MaxValue;
             options.MultipartHeadersLengthLimit = int.MaxValue;
-        });
+        }); */
+        
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();

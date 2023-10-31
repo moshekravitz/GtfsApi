@@ -28,39 +28,18 @@ static class Util
                 {
                     string[] fields = parser.ReadFields();
                     // Skip header line 
-                    if (parser.LineNumber <= 1)
+                    if (parser.LineNumber <= 1 && fields[0] == "shape_id")
                     {
                         continue;
                     }
 
                     //if shape id is the same as last shape id, add coords to list
-                    if (fields.Length >= 3) // Ensure you have at least 3 fields
+                    records.Add(new Shapes
                     {
-                        if (records.Count > 0 && records.Last().ShapeId == int.Parse(fields[0]))
-                        {
-                            records.Last().ShapeCoords.Add(new Coords
-                            {
-                                shapeLat = Double.Parse(fields[1]),
-                                shapeLon = Double.Parse(fields[2])
-                            });
-                        }
-                        else
-                        {
-                            var shape = new Shapes
-                            {
-                                ShapeId = int.Parse(fields[0]),
-                                ShapeCoords = new List<Coords>() {
-                                    new Coords
-                                    {
-                                        shapeLat = Double.Parse(fields[1]),
-                                        shapeLon = Double.Parse(fields[2])
-                                    }
-                                }
-                            };
-                            // Set other properties as needed
-                            records.Add(shape);
-                        };
-                    }
+                        ShapeId = int.Parse(fields[0]),
+                        ShapeStr = fields[1]
+                        // Set other properties as needed
+                    });
                 }
             }
             return records;

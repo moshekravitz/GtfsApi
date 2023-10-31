@@ -66,6 +66,6 @@ namespace GtfsApi.Entities
         [Key]
         public int ShapeId { get; set; }
 
-        public List<Coords> ShapeCoords  { set; get; }
+        public String ShapeStr  { set; get; }
     }
 }
