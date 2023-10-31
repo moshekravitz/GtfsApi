@@ -9,7 +9,7 @@ namespace Catalog.Attributes
     [AttributeUsage(validOn: AttributeTargets.Class | AttributeTargets.Method)]
     public class ApiKeyAttribute : Attribute, IAsyncActionFilter
     {
-        private const string APIKEYNAME = "APIKEY";
+        private const string APIKEYNAME = "ApiKey";
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (!context.HttpContext.Request.Headers.TryGetValue(APIKEYNAME, out var extractedApiKey))
@@ -38,7 +38,7 @@ namespace Catalog.Attributes
     [AttributeUsage(validOn: AttributeTargets.Class | AttributeTargets.Method)]
     public class ApiKeyAdminAttribute : Attribute, IAsyncActionFilter
     {
-        private const string APIKEYNAME = "APIKEYADMIN";
+        private const string APIKEYNAME = "ApiKeyAdmin";
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             if (!context.HttpContext.Request.Headers.TryGetValue(APIKEYNAME, out var extractedApiKey))
