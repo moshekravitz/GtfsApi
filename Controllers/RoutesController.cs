@@ -2,9 +2,7 @@ using Catalog.Attributes;
 using Catalog.repositories;
 using GtfsApi.Dots;
 using GtfsApi.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic.FileIO;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,6 +29,19 @@ namespace Catalog.Controllers
                 return NotFound();
             }
             return Ok(routeList);
+        }
+
+        [HttpGet("id")]
+        [ApiKey]
+        public async Task<ActionResult<IEnumerable<RouteDto>>> GetSingleRoute(string routeShortName)
+        {
+            var routesList = (await repository.GetListAsync(routeShortName)).ConvertAll(new Converter<Routes, RouteDto>(Extensions.AsDto));
+            if (routesList is null)
+            {
+                return NotFound();
+            }
+
+            return Ok(routesList);
         }
 
         [HttpPost("Admin")]

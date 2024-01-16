@@ -6,7 +6,6 @@ using System.Net.Mime;
 using System.Text.Json;
 using Catalog.Attributes;
 using Microsoft.AspNetCore.HttpLogging;
-using Microsoft.AspNetCore.Http.Features;
 
 internal class Program
 {
@@ -14,8 +13,8 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
-        //string ConnectionString = "mongodb://localhost:27017/";
+        //string ConnectionString = Environment.GetEnvironmentVariable("MONGO_URL");
+        string ConnectionString = "mongodb://localhost:27017/";
         builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
         {
             return new MongoClient(ConnectionString);

@@ -21,7 +21,8 @@ namespace Catalog.Attributes
                 };
                 return;
             }
-            var apiKey = Environment.GetEnvironmentVariable(APIKEYNAME);
+            //var apiKey = Environment.GetEnvironmentVariable(APIKEYNAME);
+            var apiKey = "1234";
             if (!apiKey.Equals(extractedApiKey))
             {
                 context.Result = new ContentResult()

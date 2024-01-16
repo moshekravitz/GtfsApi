@@ -104,3 +104,5 @@ C:/Users/moshe kravitz/Source/Repos/moshekravitz/GtfsApi/obj/Debug/net7.0/ref/Gt
 /home/moshekravitz/RiderProjects/GtfsApi/obj/Debug/net7.0/GtfsApi.pdb
 /home/moshekravitz/RiderProjects/GtfsApi/obj/Debug/net7.0/GtfsApi.genruntimeconfig.cache
 /home/moshekravitz/RiderProjects/GtfsApi/obj/Debug/net7.0/ref/GtfsApi.dll
+/home/moshekravitz/RiderProjects/GtfsApi/obj/Debug/net7.0/GtfsApi.sourcelink.json
+/home/moshekravitz/RiderProjects/GtfsApi/bin/Debug/net7.0/global.json

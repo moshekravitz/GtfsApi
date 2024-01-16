@@ -6,6 +6,8 @@ namespace Catalog.repositories
     {
         public  Task<List<Routes>> GetAllAsync();
 
+        public Task<List<Routes>> GetListAsync(string routeShortName);
+
         public Task CreateListAsync(List<Routes> routesList);
 
         public Task UpdateListAsync(List<Routes> routesList);
@@ -29,6 +31,7 @@ namespace Catalog.repositories
         public Task DeleteAllAsync();
 
     }
+
 
     public interface IStopInfoRepo
     {

@@ -17,6 +17,12 @@ namespace GtfsApi.Repositories
             routesCollection = database.GetCollection<Routes>(collectionName);
         }
 
+        public async Task<List<Routes>> GetListAsync(string routeShortName)
+        {
+            var filter = filterBuilder.Regex("RouteShortName", new BsonRegularExpression(routeShortName + ".*"));
+            return await (await routesCollection.FindAsync(filter)).ToListAsync();
+        }
+
         public async Task<List<Routes>> GetAllAsync()
         {
             return await (await routesCollection.FindAsync(new BsonDocument())).ToListAsync();
